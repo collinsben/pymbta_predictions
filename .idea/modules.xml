@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../flexx/flexx.connect.bl65x/.idea/flexx.connect.bl65x.iml" filepath="$PROJECT_DIR$/../flexx/flexx.connect.bl65x/.idea/flexx.connect.bl65x.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/mbta_timer.iml" filepath="$PROJECT_DIR$/.idea/mbta_timer.iml" />
     </modules>
   </component>
