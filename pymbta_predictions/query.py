@@ -1,4 +1,9 @@
-from datetime import datetime, timezone, timedelta
+"""Get MBTA's predictions for a given station
+
+API Documentation: https://api-v3.mbta.com/docs/swagger/index.html
+Best Practices: https://www.mbta.com/developers/v3-api/best-practices
+"""
+from datetime import datetime
 import requests
 from typing import Union, List
 import zoneinfo
@@ -6,6 +11,8 @@ import zoneinfo
 BASE_URL = 'https://api-v3.mbta.com/'
 TIMEZONE_INFO = zoneinfo.ZoneInfo("America/New_York")
 TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
+
+STATUS_STOP = 'STOPPED_AT'
 
 
 def _get_matching_id(items: List[dict], search_id) -> Union[dict, None]:
@@ -71,16 +78,31 @@ def get_predictions_for_stop(stop_id: str, route_id: str, num_predicts: int) -> 
     distance_s = arrival_time - datetime.now(TIMEZONE_INFO)
     distance_s = distance_s.seconds
 
-    if prediction['attributes']['status']:
-      # Deal with this
-      display_str = prediction['attributes']['status']
-    else:
-      display_str = f'{int(distance_s / 60 + 0.5):0.0f} min'
+    if distance_s < 0:
+      # The vehicle has already left
+      continue
 
+    # Get associated vehicle and trip data
     vehicle = _get_matching_id(vehicles,
                                prediction['relationships']['vehicle']['data']['id'])
     trip = _get_matching_id(trips, prediction['relationships']['trip']['data']['id'])
     headsign = trip['attributes']['headsign']
+
+    if prediction['attributes']['status']:
+      # There's a status on the train
+      display_str = prediction['attributes']['status']
+    else:
+      if distance_s > (20 * 60):
+        # Per MBTA guidelines, cap at 20 min
+        display_str = '20+ min'
+      elif distance_s < 90 and vehicle['attributes']['current_status'] == STATUS_STOP:
+        display_str = 'BRD'
+      elif distance_s < 30:
+        display_str = 'ARR'
+      elif distance_s < 60:
+        display_str = 'Approaching'
+      else:
+        display_str = f'{int(distance_s / 60 + 0.5):0.0f} min'
 
     parsed_predictions[direction].append(
       {'direction_name': direction_name,
@@ -88,4 +110,8 @@ def get_predictions_for_stop(stop_id: str, route_id: str, num_predicts: int) -> 
        'distance_s': distance_s,
        'headsign': headsign}
     )
+
+  # Return the trips sorted by time
+  for direction_list in parsed_predictions:
+    list.sort(direction_list[0], key=lambda x: x['distance_s'])
   return parsed_predictions

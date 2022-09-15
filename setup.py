@@ -8,6 +8,6 @@ setup(
         'pymbta_predictions',
     ]),
     install_requires=[
-        '',
+        'requests',
     ],
 )
