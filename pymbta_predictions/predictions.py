@@ -113,5 +113,5 @@ def get_predictions_for_stop(stop_id: str, route_id: str, num_predicts: int) -> 
 
   # Return the trips sorted by time
   for direction_list in parsed_predictions:
-    list.sort(direction_list[0], key=lambda x: x['distance_s'])
+    list.sort(direction_list, key=lambda x: x['distance_s'])
   return parsed_predictions
