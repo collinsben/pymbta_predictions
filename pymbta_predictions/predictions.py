@@ -2,6 +2,11 @@
 
 API Documentation: https://api-v3.mbta.com/docs/swagger/index.html
 Best Practices: https://www.mbta.com/developers/v3-api/best-practices
+
+Currently this does not support an API key or header info.
+
+Devices making requests without keys can make up to 20 requests per minute
+without getting throttled.
 """
 from datetime import datetime
 import requests
