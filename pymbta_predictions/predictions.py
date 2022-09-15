@@ -106,7 +106,7 @@ def get_predictions_for_stop(stop_id: str, route_id: str, num_predicts: int) -> 
 
     parsed_predictions[direction].append(
       {'direction_name': direction_name,
-       'display_str:': display_str,
+       'display_str': display_str,
        'distance_s': distance_s,
        'headsign': headsign}
     )
