@@ -1,6 +1,6 @@
 from datetime import datetime, timezone, timedelta
 import requests
-from typing import Union
+from typing import Union, List
 import zoneinfo
 
 BASE_URL = 'https://api-v3.mbta.com/'
@@ -8,7 +8,7 @@ TIMEZONE_INFO = zoneinfo.ZoneInfo("America/New_York")
 TIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
 
-def _get_matching_id(items: list[dict], search_id) -> Union[dict, None]:
+def _get_matching_id(items: List[dict], search_id) -> Union[dict, None]:
   """Given a list of JSONs, return the one with an 'ID' field that matches"""
   for item in items:
     if item['id'] == search_id:
